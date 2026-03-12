@@ -452,7 +452,7 @@ export default function PortfolioPage() {
                   className="group relative bg-white border border-gray-100 p-6 md:p-10 hover:border-orange-500 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col sm:flex-row gap-6 md:gap-8 items-start rounded-2xl"
                 >
                   {/* Container Icône */}
-                  <div className="shrink-0 p-4 bg-gray-50 text-gray-700 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300 rounded-xl">
+                  <div className="shrink-0 p-4 bg-gray-50 text-gray-700 bg-orange-600 text-white transition-colors duration-300 rounded-xl">
                     {item.icon}
                   </div>
 
@@ -460,7 +460,7 @@ export default function PortfolioPage() {
                     <h4 className="text-xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-orange-700 transition-colors">
                       {item.title}
                     </h4>
-                    <div className="h-1 w-12 bg-orange-600/20 group-hover:w-20 group-hover:bg-orange-600 mb-4 transition-all duration-500"></div>
+                    <div className="h-1 w-12 w-20 bg-orange-600 mb-4 transition-all duration-500"></div>
                     <p className="text-gray-500 text-sm md:text-base leading-relaxed italic">
                       {item.desc}
                     </p>

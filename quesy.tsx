@@ -29,11 +29,6 @@ const MinproffLanding = () => {
       {/* 1. Header Image (Bandeau Officiel) */}
       <div className="w-full bg-white border-b border-gray-200">
         <div className="w-full md:max-w-7xl mx-auto px-1 py-2 flex md:justify-between md:items-center">
-          <img
-            src="../assets/images/minproff.jpeg"
-            alt="Logo MINPROFF"
-            className="w-full md:w-auto h-34 md:h-16"
-          />
           <div className="hidden md:block text-right">
             <p className="text-xs font-bold uppercase tracking-widest text-gray-500">
               République du Cameroun

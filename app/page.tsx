@@ -537,8 +537,8 @@ export default function PortfolioPage() {
               <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight italic">
                 Prêt à <span className="text-orange-500">innover ?</span>
               </h2>
-              <div className="space-y-6">
-                <div className="flex items-center gap-4 justify-center md:justify-start">
+              <div className="space-y-6 flex flex-col items-start justify-start">
+                <div className="flex items-center gap-4 justify-start">
                   <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-orange-500 border border-white/10">
                     <Mail size={20} />
                   </div>

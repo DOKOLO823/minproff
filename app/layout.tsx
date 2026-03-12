@@ -13,9 +13,8 @@ import "./globals.css";
 // });
 
 export const metadata: Metadata = {
-  title: "MINPROFF - République du Cameroun",
-  description:
-    "Site officiel du Ministère de la Promotion de la Femme et de la Famille du Cameroun",
+  title: "NZE MEKOU - PORTFOLIO",
+  description: "Portfolio professionnel de NZE MEKOU",
   icons: {
     icon: "/icon.png",
     shortcut: "/favicon.ico",

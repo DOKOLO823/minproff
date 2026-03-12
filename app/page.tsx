@@ -1,611 +1,832 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import {
+  Code2,
+  Database,
+  Layout,
+  Wrench,
+  Mail,
+  Award,
+  Phone,
+  MessageCircle,
   Menu,
   X,
+  ArrowRight,
+  ChevronLeft,
   ChevronRight,
-  Users,
-  Heart,
-  Shield,
-  Globe,
-  Award,
+  Maximize2,
 } from "lucide-react";
 
-const MinproffLanding = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+/* --- ANIMATIONS SPECTACULAIRES --- */
 
-  // Couleurs : Vert profond pour le sérieux, Rouge pour l'accentuation institutionnelle
-  const colors = {
-    primary: "text-emerald-900",
-    accent: "bg-emerald-700",
-    hover: "hover:bg-emerald-800",
-    flagRed: "bg-red-600",
-    flagYellow: "bg-yellow-400",
-  };
+const menuVariants: Variants = {
+  // Ajoute le type ici
+  closed: {
+    x: "100%",
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 40,
+    },
+  },
+  open: {
+    x: 0,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 40,
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  // Ajoute le type ici
+  closed: { opacity: 0, x: 50 },
+  open: {
+    opacity: 1,
+    x: 0,
+    transition: { type: "spring", stiffness: 300, damping: 24 },
+  },
+};
+
+const fadeInUp: any = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+export default function PortfolioPage() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+
+  // Gestion précise du hash pour le focus des liens
+  useEffect(() => {
+    const handleUpdateActive = () => {
+      const hash = window.location.hash || "";
+      setActiveSection(hash);
+    };
+
+    window.addEventListener("hashchange", handleUpdateActive);
+    window.addEventListener("load", handleUpdateActive);
+    handleUpdateActive();
+
+    return () => {
+      window.removeEventListener("hashchange", handleUpdateActive);
+      window.removeEventListener("load", handleUpdateActive);
+    };
+  }, []);
+
+  const navLinks = [
+    { name: "Expertise", href: "#expertise" },
+    { name: "Projets", href: "#portfolio" },
+    { name: "Contact", href: "#contact" },
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* 1. Header Image (Bandeau Officiel) */}
-      <div className="w-full bg-white border-b border-gray-200">
-        <div className="w-full md:max-w-7xl mx-auto px-1 py-2 flex md:justify-between md:items-center">
-          <img
-            src="../assets/images/minproff.jpeg"
-            alt="Logo MINPROFF"
-            className="w-full md:w-auto h-34 md:h-16"
-          />
-          <div className="hidden md:block text-right">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">
-              République du Cameroun
-            </p>
-            <p className="text-xs italic text-gray-400">
-              Paix - Travail - Patrie
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-emerald-100">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <span className="font-extrabold text-xl tracking-tighter text-emerald-900">
-                MINPROFF
-              </span>
+    <div className="min-h-screen bg-white font-sans text-gray-900 scroll-smooth">
+      {/* --- NAVBAR --- */}
+      <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-[100] border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-orange-700 rounded-lg flex items-center justify-center text-white font-bold">
+              N
             </div>
+            <span className="font-bold text-xl tracking-tight">NzeMekou.</span>
+          </div>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-8 items-center">
-              {[
-                "Le Ministère",
-                "Missions",
-                "Programmes",
-                "Actualités",
-                "Documentation",
-              ].map((item) => (
-                <a
-                  key={item}
-                  href="#"
-                  className="text-sm font-medium text-slate-600 hover:text-emerald-700 transition-colors duration-300"
-                >
-                  {item}
-                </a>
-              ))}
-              <button
-                className={`${colors.accent} text-white px-5 py-2 rounded-sm text-sm font-semibold ${colors.hover} transition-all shadow-md`}
+          {/* Nav Desktop */}
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`transition-all duration-300 font-bold relative pb-1 ${
+                  activeSection === link.href
+                    ? "text-orange-700"
+                    : "text-gray-500 hover:text-orange-700"
+                }`}
               >
-                Contactez-nous
-              </button>
-            </div>
-
-            {/* Mobile Button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-slate-600"
-              >
-                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
-            </div>
+                {link.name}
+                {activeSection === link.href && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-orange-700"
+                  />
+                )}
+              </a>
+            ))}
+            <a
+              href="#contact"
+              className="bg-orange-700 text-white px-5 py-2.5 rounded-full font-bold hover:bg-orange-800 transition-all text-sm"
+            >
+              Contactez-moi
+            </a>
           </div>
+
+          <button
+            className="md:hidden p-2 z-[160] relative"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {/* On ne garde que le menu burger ici car le "X" est à l'intérieur du menu maintenant */}
+            {!isMenuOpen && <Menu size={28} className="text-gray-900" />}
+          </button>
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 animate-in slide-in-from-top duration-300">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {["Le Ministère", "Missions", "Programmes", "Actualités"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-emerald-50 rounded-md"
-                  >
-                    {item}
-                  </a>
-                ),
-              )}
-            </div>
-          </div>
-        )}
       </nav>
 
-      {/* 3. Hero Section */}
-      <section className="relative h-[600px] flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="../assets/images/hero.jpg"
-            className="w-full h-full object-cover brightness-[0.3]"
-            alt="Hero Background"
-          />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
-          <div className="max-w-2xl text-white">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-12 h-1 bg-yellow-400"></div>
-              <span className="uppercase tracking-widest text-sm font-bold text-yellow-400">
-                Institutionnel
+      {/* --- MENU MOBILE SPECTACULAIRE --- */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            variants={menuVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
+            className="fixed inset-0 z-[150] bg-white flex flex-col p-8 md:hidden"
+          >
+            {/* Header du Menu avec bouton Fermer */}
+            <div className="flex justify-between items-center mb-12">
+              <span className="font-bold text-xl tracking-tight text-orange-700">
+                Menu.
               </span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight mb-6">
-              Promouvoir la Femme, <br />
-              <span className="text-emerald-400">Protéger la Famille.</span>
-            </h1>
-            <p className="text-lg text-slate-200 mb-8 leading-relaxed">
-              Le Ministère de la Promotion de la Femme et de la Famille œuvre
-              pour l'égalité des chances et le renforcement des socles sociaux
-              du Cameroun.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-white text-emerald-900 px-8 py-4 rounded-sm font-bold flex items-center hover:bg-emerald-50 transition-all group">
-                Découvrir nos actions
-                <ChevronRight
-                  className="ml-2 group-hover:translate-x-1 transition-transform"
-                  size={20}
-                />
-              </button>
-              <button className="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-sm font-bold hover:bg-white/10 transition-all">
-                Plan d'Action 2026
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 4. Missions (Cards) */}
-      <section className="py-24 max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
-            Missions Régaliennes
-          </h2>
-          <div className="h-1.5 w-20 bg-emerald-700 mx-auto"></div>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            {
-              icon: <Users size={32} />,
-              title: "Protection Sociale",
-              desc: "Assurer l'épanouissement des familles et le respect des droits fondamentaux.",
-            },
-            {
-              icon: <Award size={32} />,
-              title: "Promotion de la Femme",
-              desc: "Renforcement des capacités économiques et autonomisation des femmes.",
-            },
-            {
-              icon: <Shield size={32} />,
-              title: "Égalité des Genres",
-              desc: "Lutte contre toutes les formes de discriminations et de violences.",
-            },
-          ].map((mission, idx) => (
-            <div
-              key={idx}
-              className="bg-white p-10 rounded-xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300"
-            >
-              <div className="text-emerald-700 mb-6 bg-emerald-50 w-16 h-16 flex items-center justify-center rounded-lg italic">
-                {mission.icon}
-              </div>
-              <h3 className="text-xl font-bold mb-4 text-slate-800">
-                {mission.title}
-              </h3>
-              <p className="text-slate-600 leading-relaxed">{mission.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Section Présentation Institutionnelle */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
-            {/* Texte à Gauche */}
-            <div className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-serif font-extrabold text-emerald-900 leading-tight">
-                Ministère de la Promotion de la Femme et de la Famille
-                (MINPROFF)
-                <span className="block text-lg font-medium text-emerald-600 mt-2 italic">
-                  Ministry of Women's Empowerment and the Family
-                </span>
-              </h2>
-
-              <div className="prose prose-emerald text-slate-700 leading-relaxed text-justify space-y-4">
-                <p>
-                  Le{" "}
-                  <strong>
-                    Ministère de la Promotion de la Femme et de la Famille
-                    (MINPROFF)
-                  </strong>{" "}
-                  occupe une place stratégique au sein de l’État camerounais. Il
-                  est responsable de l’élaboration et de la mise en œuvre de la
-                  politique du Gouvernement en matière de promotion de la femme,
-                  de protection de l'enfant et de la famille.
-                </p>
-                <p className="hidden md:block">
-                  Le MINPROFF conçoit et coordonne les politiques relatives à
-                  l'égalité des chances, en lien permanent avec les partenaires
-                  au développement et les autres départements ministériels. Ses
-                  missions fondamentales incluent l'amélioration constante du
-                  statut juridique et social de la femme, ainsi que le
-                  renforcement de la cohésion familiale.
-                </p>
-
-                <hr className="border-emerald-100 my-6" />
-
-                <p className="italic text-slate-500 text-sm">
-                  The Ministry (MINPROFF) holds a strategic position. It is
-                  responsible for the implementation of government policy on
-                  women's empowerment and family protection, ensuring the
-                  improvement of women's legal and social status across the
-                  nation.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap gap-4 pt-4">
-                <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 px-4 py-2 border border-emerald-100 hover:bg-emerald-100 transition-all">
-                  Télécharger l'Organigramme
-                </button>
-                <button className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 px-4 py-2 border border-emerald-100 hover:bg-emerald-100 transition-all">
-                  Guide de l'Usager
-                </button>
-              </div>
-            </div>
-
-            {/* Logo à Droite */}
-            <div className="relative flex justify-center items-center p-8 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-100 rounded-full -mr-16 -mt-16 opacity-50"></div>
-              <img
-                src="../assets/images/minproff.jpeg"
-                alt="Sceau de la République"
-                className="relative z-10 w-full max-w-sm drop-shadow-2xl grayscale-[0.2] hover:grayscale-0 transition-all duration-500"
-              />
-              <div className="absolute bottom-4 text-[10px] font-bold text-slate-300 uppercase tracking-[0.3em]">
-                République du Cameroun
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section Nos Projets */}
-      <section className="py-24 bg-slate-50 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-end mb-16">
-            <div className="space-y-2">
-              {/* <span className="text-emerald-600 font-bold uppercase tracking-widest text-sm">
-                Portfolio
-              </span> */}
-              <h2 className="text-3xl font-bold text-slate-900">Nos projets</h2>
-              <div className="h-1 w-12 bg-emerald-600"></div>
-            </div>
-            {/* <button className="text-sm font-bold text-emerald-800 hover:underline">
-              Voir tous les projets
-            </button> */}
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Projet d'Appui à l'Entrepreneuriat Féminin",
-                zone: "National",
-                img: "../assets/images/card.jpg",
-                status: "En cours",
-              },
-              {
-                title: "Modernisation des Centres de Promotion (CPFF)",
-                zone: "Zones Rurales",
-                img: "../assets/images/card.jpg",
-                status: "Phase 2",
-              },
-              {
-                title: "Programme de Lutte contre les VBG",
-                zone: "Septentrion & Est",
-                img: "../assets/images/card.jpg",
-                status: "Prioritaire",
-              },
-            ].map((project, idx) => (
-              <div
-                key={idx}
-                className="group bg-white rounded-sm overflow-hidden border border-slate-200 hover:border-emerald-300 transition-all duration-300 shadow-sm hover:shadow-xl"
+              {/* Bouton Fermer Professionnel */}
+              <motion.button
+                variants={itemVariants} // L'icône apparaîtra avec une petite animation
+                onClick={() => setIsMenuOpen(false)}
+                className="p-3 bg-gray-50 hover:bg-orange-50 text-gray-900 hover:text-orange-700 rounded-xl transition-colors border border-gray-100 shadow-sm"
               >
-                <div className="h-56 relative overflow-hidden">
-                  <img
-                    src={project.img}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-emerald-700 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-tighter">
-                      {project.status}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center text-[10px] font-bold text-emerald-600 mb-3 uppercase tracking-widest">
-                    <Globe size={12} className="mr-2" /> {project.zone}
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-800 group-hover:text-emerald-700 transition-colors mb-4 leading-tight">
-                    {project.title}
-                  </h3>
-                  <button className="flex items-center text-xs font-black uppercase tracking-widest text-slate-400 group-hover:text-emerald-800 transition-all">
-                    Détails du projet{" "}
-                    <ChevronRight size={14} className="ml-1" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. Actualités (Modern Grid) */}
-      <section className="py-20 bg-slate-100">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl font-bold">Dernières Actualités</h2>
-              <p className="text-slate-500 mt-2">
-                Suivez les activités du Ministère sur le terrain.
-              </p>
-            </div>
-            <button className="hidden md:block text-emerald-800 font-bold border-b-2 border-emerald-800 pb-1">
-              Voir tout
-            </button>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="group cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all"
-              >
-                <div className="h-48 overflow-hidden relative">
-                  <img
-                    src="../assets/images/hero.jpg"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    alt="News"
-                  />
-                  <div className="absolute top-4 left-4 bg-red-600 text-white text-[10px] px-2 py-1 font-bold uppercase">
-                    Important
-                  </div>
-                </div>
-                <div className="p-5">
-                  <p className="text-xs text-slate-400 mb-2">07 Mars 2026</p>
-                  <h4 className="font-bold text-slate-800 group-hover:text-emerald-700 transition-colors line-clamp-2">
-                    Célébration de la Journée Internationale de la Femme à
-                    Yaoundé
-                  </h4>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section Nous Contacter */}
-      <section className="py-24 bg-white border-t border-slate-100">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-emerald-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row">
-            {/* Côté Gauche : Informations de Contact */}
-            <div className="md:w-1/3 bg-emerald-800 p-10 md:p-12 text-white flex flex-col justify-between">
-              <div>
-                <h2 className="text-3xl font-serif font-bold mb-6">
-                  Nous Contacter
-                </h2>
-                <p className="text-emerald-100/80 mb-10 leading-relaxed">
-                  Nos services sont à votre écoute pour toute demande
-                  d'information ou assistance relative aux droits de la femme et
-                  de la famille.
-                </p>
-
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-emerald-700/50 p-3 rounded-lg">
-                      <Globe size={20} className="text-yellow-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">
-                        Siège Social
-                      </p>
-                      <p className="text-sm">
-                        Immeuble Ministériel N°1, Yaoundé, Cameroun
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="bg-emerald-700/50 p-3 rounded-lg">
-                      <Users size={20} className="text-yellow-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-emerald-300">
-                        Email Officiel
-                      </p>
-                      <p className="text-sm">contact@minproff.gov.cm</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-12 pt-8 border-t border-emerald-700">
-                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-emerald-400">
-                  Horaires d'ouverture
-                </p>
-                <p className="text-sm mt-2">Lundi - Vendredi : 07h30 - 15h30</p>
-              </div>
+                <X size={24} strokeWidth={2.5} />
+              </motion.button>
             </div>
 
-            {/* Côté Droit : Le Formulaire (Version Corrigée) */}
-            <div className="md:w-2/3 bg-white p-6 md:p-10">
-              <form className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Nom */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700">
-                      Nom Complet
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ex: Dokolo Yvan"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-3 text-sm focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 outline-none transition-all placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700">
-                      Adresse Email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="yvan.zolataire@exemple.cm"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-3 text-sm focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 outline-none transition-all placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  {/* Téléphone */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700">
-                      Téléphone
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+237 6XX XX XX XX"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-3 text-sm focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 outline-none transition-all placeholder:text-slate-400"
-                    />
-                  </div>
-
-                  {/* Objet */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-black uppercase tracking-wider text-slate-700">
-                      Objet de la demande
-                    </label>
-                    <div className="relative">
-                      <select className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-3 text-sm focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 outline-none appearance-none transition-all cursor-pointer">
-                        <option>Information Générale</option>
-                        <option>Protection de la Famille</option>
-                        <option>Appui à l'Entrepreneuriat</option>
-                        <option>Signalement / VBG</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                        <ChevronRight size={14} className="rotate-90" />
+            <div className="flex flex-col gap-6">
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.href;
+                return (
+                  <motion.div key={link.name} variants={itemVariants}>
+                    <a
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`group flex items-center justify-between text-4xl font-black uppercase tracking-tighter transition-all ${
+                        isActive
+                          ? "text-orange-700 pl-4"
+                          : "text-gray-900 hover:text-orange-600"
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        {isActive && (
+                          <div className="w-2 h-8 bg-orange-700 rounded-full" />
+                        )}
+                        {link.name}
                       </div>
-                    </div>
+                      {/* <ArrowRight
+                        className={`transition-transform duration-300 ${isActive ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`}
+                        size={24}
+                      /> */}
+                    </a>
+                  </motion.div>
+                );
+              })}
+
+              <motion.div variants={itemVariants} className="mt-8">
+                <a
+                  href="#contact"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full py-6 bg-orange-700 text-white text-center rounded-2xl font-bold text-xl flex items-center justify-center gap-3 hover:bg-orange-800 transition-transform active:scale-95"
+                >
+                  Contactez-moi <Mail size={24} />
+                </a>
+              </motion.div>
+            </div>
+
+            <motion.div
+              variants={itemVariants}
+              className="mt-auto pb-8 text-center"
+            >
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
+                © 2026 Nze Mekou
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* --- HERO SECTION --- (Inchangée comme demandé) */}
+      <section className="relative min-h-[90vh] isolate flex items-center pt-24 pb-16 px-6 overflow-hidden">
+        <div className="absolute inset-0 -z-10">
+          <img
+            src="../assets/images/code1.jpg"
+            alt="Background"
+            className="w-full h-full object-cover"
+            style={{ backgroundColor: "#111827" }}
+          />
+          <div className="absolute inset-0 bg-gray-900/70 z-0" />
+        </div>
+
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeInUp}
+              className="flex-[1.2] text-center md:text-left z-10"
+            >
+              <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] mb-6 mt-6">
+                Salut, je m'appelle <br />
+                <span className="text-orange-500">Nze Mekou.</span>
+              </h1>
+              <div className="md:hidden w-full max-w-[260px] mx-auto mb-8">
+                <div className="aspect-square bg-gray-800 rounded-[2rem] overflow-hidden border-4 border-white/10 shadow-2xl">
+                  <img
+                    src="../assets/images/nze/nze.jpg"
+                    alt="Nze Mekou Mobile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl leading-relaxed">
+                Développeur Fullstack passionné, je transforme vos idées en
+                <span className="font-semibold text-white px-1">
+                  {" "}
+                  solutions numériques robustes{" "}
+                </span>
+                conçues pour répondre aux défis réels de votre secteur.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+                <a
+                  href="#portfolio"
+                  className="w-full sm:w-auto px-8 py-4 bg-orange-600 text-white rounded-full font-bold flex items-center justify-center gap-2 hover:bg-orange-700 transition-all group"
+                >
+                  Voir mes travaux{" "}
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </a>
+                <div className="flex items-center gap-2 px-4 py-2.5 border border-white/10 rounded-full text-[11px] md:text-sm font-bold text-gray-300 bg-white/5 backdrop-blur-sm whitespace-nowrap overflow-hidden">
+                  <Award className="w-4 h-4 md:w-5 h-5 text-orange-500 shrink-0" />
+                  <span className="truncate">
+                    Gagnant Hackathon Talent Innovant
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="hidden md:block flex-1 max-w-md"
+            >
+              <div className="aspect-square bg-gray-800 rounded-[3rem] overflow-hidden border-[12px] border-white/5 shadow-2xl relative group">
+                <img
+                  src="../assets/images/nze/nze.jpg"
+                  alt="Nze Mekou Desktop"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- EXPERTISE SECTION --- */}
+      <section id="expertise" className="py-24 bg-white px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Titre avec animation au scroll explicite */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-16 text-center md:text-left"
+          >
+            <h2 className="text-xs font-black text-orange-700 uppercase tracking-[0.3em] mb-3">
+              Compétences
+            </h2>
+            <h3 className="text-3xl md:text-5xl font-bold text-gray-900">
+              Mon Expertise Technique
+            </h3>
+            <div className="h-1.5 w-20 bg-orange-600 mt-6 rounded-full mx-auto md:mx-0"></div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <ExpertiseCard
+              icon={<Code2 />}
+              title="Dév. Informatique"
+              desc="Maîtrise du langage C et des algorithmes complexes pour des performances optimales."
+            />
+            <ExpertiseCard
+              icon={<Layout />}
+              title="Web Development"
+              desc="Création d'interfaces intuitives et réactives avec Next.js et écosystèmes modernes."
+            />
+            <ExpertiseCard
+              icon={<Database />}
+              title="Bases de Données"
+              desc="Conception d'architectures de données robustes sous MySQL et PostgreSQL."
+            />
+            <ExpertiseCard
+              icon={<Wrench />}
+              title="Solutions Locales"
+              desc="Développement d'outils sur mesure répondant aux besoins spécifiques du terrain."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* --- SECTION EXPÉRIENCE ET ENGAGEMENT PROFESSIONNEL --- */}
+      <section
+        id="experience"
+        className=" bg-white px-6 border-t border-gray-100"
+      >
+        <div className="max-w-7xl mx-auto">
+          {/* Titre de section aligné sur le style global */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-16 text-center md:text-left"
+          >
+            <h2 className="text-xs font-black text-orange-700 uppercase tracking-[0.3em] mb-3">
+              Parcours & Engagement
+            </h2>
+            <h3 className="text-3xl md:text-5xl font-bold text-gray-900">
+              L'ingénierie pour les réalités locales
+            </h3>
+            <div className="h-1.5 w-20 bg-orange-600 mt-6 rounded-full mx-auto md:mx-0"></div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+            {/* COLONNE GAUCHE (5/12) : LA VISION RÉDACTIONNELLE */}
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="lg:col-span-5 flex flex-col"
+            >
+              <div className="relative border-l-4 border-orange-600 pl-6 md:pl-8 mb-10 bg-gray-50/50 py-8 rounded-r-2xl">
+                <p className="text-xl md:text-2xl text-gray-800 font-medium leading-relaxed italic">
+                  "Au cours de ma formation et de mes stages, j'ai participé à
+                  la conception de projets informatiques orientés vers la
+                  gestion de données et les applications web locales."
+                </p>
+              </div>
+
+              <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg">
+                <p>
+                  Je travaille notamment sur des systèmes numériques visant à{" "}
+                  <span className="text-gray-900 font-semibold">
+                    améliorer la gestion d’informations
+                  </span>{" "}
+                  dans différents contextes.
+                </p>
+                <p>
+                  Mon approche combine{" "}
+                  <span className="text-gray-900 font-semibold text-orange-700">
+                    rigueur technique et pragmatisme
+                  </span>
+                  , en mettant l'accent sur des piliers fondamentaux :
+                </p>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 pt-2">
+                  {[
+                    "Solutions Intuitives",
+                    "Fonctionnalité Optimale",
+                    "Adaptation Locale",
+                  ].map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-center gap-3 text-sm font-bold text-gray-800 uppercase tracking-tight"
+                    >
+                      <span className="w-2 h-2 bg-orange-500 rounded-full"></span>{" "}
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-12 flex items-baseline gap-3">
+                <span className="text-5xl md:text-6xl font-black text-gray-900 tracking-tighter">
+                  03
+                </span>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold text-gray-900 uppercase tracking-widest">
+                    Années
+                  </span>
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold">
+                    D'Expertise Terrain
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* COLONNE DROITE (7/12) : COMPÉTENCES MÉTIERS - Cards Professionnelles */}
+            <div className="lg:col-span-7 flex flex-col gap-4">
+              {[
+                {
+                  title: "Analyse & Conception",
+                  desc: "Élaboration de cahiers des charges techniques et modélisation d'architectures numériques optimisées pour les problématiques complexes.",
+                  icon: <Layout className="w-5 h-5 md:w-6 h-6" />,
+                },
+                {
+                  title: "Gestion de Données",
+                  desc: "Mise en place de schémas relationnels robustes et gestion de flux critiques pour garantir l'intégrité et la sécurité des données.",
+                  icon: <Database className="w-5 h-5 md:w-6 h-6" />,
+                },
+                {
+                  title: "Ingénierie Pratique",
+                  desc: "Maîtrise complète des cycles de développement, du prototypage à la mise en production de solutions locales performantes.",
+                  icon: <Wrench className="w-5 h-5 md:w-6 h-6" />,
+                },
+              ].map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: "-50px" }}
+                  variants={fadeInUp}
+                  className="group relative bg-white border border-gray-100 p-6 md:p-10 hover:border-orange-500 transition-all duration-300 shadow-sm hover:shadow-md flex flex-col sm:flex-row gap-6 md:gap-8 items-start rounded-2xl"
+                >
+                  {/* Container Icône */}
+                  <div className="shrink-0 p-4 bg-gray-50 text-gray-700 group-hover:bg-orange-600 group-hover:text-white transition-colors duration-300 rounded-xl">
+                    {item.icon}
                   </div>
-                </div>
 
-                {/* Message */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] font-black uppercase tracking-wider text-slate-700">
-                    Votre Message
-                  </label>
-                  <textarea
-                    rows={5}
-                    placeholder="Décrivez votre demande avec précision..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-md px-4 py-3 text-sm focus:bg-white focus:border-emerald-600 focus:ring-4 focus:ring-emerald-600/5 outline-none transition-all resize-none placeholder:text-slate-400"
-                  ></textarea>
-                </div>
-
-                {/* Bouton Envoyer */}
-                <div className="pt-2">
-                  <button className="whitespace-nowrap inline-flex items-center gap-3 bg-emerald-700 text-white px-8 py-4 rounded-md font-bold uppercase text-[11px] tracking-[0.15em] hover:bg-emerald-800 active:scale-95 transition-all shadow-lg shadow-emerald-900/10">
-                    Envoyer le formulaire
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </form>
+                  <div className="flex-grow">
+                    <h4 className="text-xl font-bold text-gray-900 mb-2 md:mb-3 group-hover:text-orange-700 transition-colors">
+                      {item.title}
+                    </h4>
+                    <div className="h-1 w-12 bg-orange-600/20 group-hover:w-20 group-hover:bg-orange-600 mb-4 transition-all duration-500"></div>
+                    <p className="text-gray-500 text-sm md:text-base leading-relaxed italic">
+                      {item.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. Footer */}
-      <footer className="bg-slate-900 text-white pt-20 pb-10">
-        <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 border-b border-white/10 pb-16">
-          <div className="col-span-1 md:col-span-1">
-            <h3 className="text-2xl font-bold mb-6 italic">MINPROFF</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Le Ministère de la Promotion de la Femme et de la Famille est
-              l'organe du gouvernement chargé de la mise en œuvre de la
-              politique nationale en matière de promotion de la femme.
-            </p>
-          </div>
+      {/* --- PORTFOLIO SECTION --- */}
+      <section id="portfolio" className="py-24 px-6 bg-gray-50/50">
+        <div className="max-w-7xl mx-auto">
+          {/* Titre avec animation au scroll explicite */}
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={fadeInUp}
+            className="mb-16 text-center md:text-left"
+          >
+            <h2 className="text-xs font-black text-orange-700 uppercase tracking-[0.3em] mb-3">
+              Réalisations
+            </h2>
+            <h3 className="text-3xl md:text-5xl font-bold text-gray-900">
+              Projets Sélectionnés
+            </h3>
+          </motion.div>
 
-          <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest text-emerald-400">
-              Liens Utiles
-            </h4>
-            <ul className="space-y-4 text-sm text-slate-300">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Portail Gouvernemental
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Projets en cours
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Documentation PDF
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Plan Stratégique
-                </a>
-              </li>
-            </ul>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {/* Projet 1 : Santé & Social */}
+            <ProjectCard
+              images={[
+                "../assets/images/nze/s1.jpeg",
+                "../assets/images/nze/s2.jpeg", // Image secondaire pour le test
+                "../assets/images/nze/s3.jpeg", // Image tertiaire pour le test
+              ]}
+              category="Santé & Social"
+              title="Suivi Maternel Rural"
+              desc="Une solution logicielle conçue pour les zones à connectivité limitée, permettant aux sages-femmes du Grand-Nord de digitaliser le suivi des patientes et d'anticiper les risques médicaux."
+              tags={["C#", "SQLite", "Bootstrap"]}
+            />
 
-          <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest text-emerald-400">
-              Contact
-            </h4>
-            <ul className="space-y-4 text-sm text-slate-300">
-              <li>Yaoundé, Cameroun</li>
-              <li>Email: contact@minproff.cm</li>
-              <li>Tél: +237 222 XX XX XX</li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-bold mb-6 uppercase text-xs tracking-widest text-emerald-400">
-              Newsletter
-            </h4>
-            <div className="flex">
-              <input
-                type="email"
-                placeholder="votre email"
-                className="bg-slate-800 border-none px-4 py-2 w-full text-sm focus:ring-1 ring-emerald-500 outline-none"
-              />
-              <button className="bg-emerald-700 px-4 py-2">
-                <ChevronRight size={18} />
-              </button>
-            </div>
+            {/* Projet 2 : Gestion Commerciale */}
+            <ProjectCard
+              images={[
+                "../assets/images/nze/b1.jpeg",
+                "../assets/images/nze/b2.jpeg",
+              ]}
+              category="Gestion Commerciale"
+              title="Gestion de Boutique"
+              desc="Plateforme complète de gestion de stock en temps réel avec système de facturation automatisé, optimisée pour les commerçants locaux souhaitant sécuriser leurs transactions."
+              tags={["PHP", "MySQL", "JavaScript"]}
+            />
           </div>
         </div>
+      </section>
 
-        <div className="max-w-7xl mx-auto px-4 pt-8 flex flex-col md:row justify-between items-center text-xs text-slate-500">
-          <p>
-            © 2026 Ministère de la Promotion de la Femme et de la Famille. Tous
-            droits réservés.
-          </p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <div className="flex space-x-1">
-              <div className="w-2 h-4 bg-emerald-600"></div>
-              <div className="w-2 h-4 bg-red-600"></div>
-              <div className="w-2 h-4 bg-yellow-400"></div>
-            </div>
-            <span>Designed for Excellence</span>
+      {/* --- CONTACT SECTION --- (Inchangée) */}
+      <section
+        id="contact"
+        className="py-24 px-6 bg-gray-900 text-white overflow-hidden"
+      >
+        <div className="max-w-7xl mx-auto text-center md:text-left">
+          {/* Contenu contact existant... */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+            >
+              <h2 className="text-4xl md:text-6xl font-black mb-8 leading-tight italic">
+                Prêt à <span className="text-orange-500">innover ?</span>
+              </h2>
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 justify-center md:justify-start">
+                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-orange-500 border border-white/10">
+                    <Mail size={20} />
+                  </div>
+                  <a
+                    href="mailto:nzemekoualandany@gmail.com"
+                    className="hover:text-orange-500 transition-colors"
+                  >
+                    nzemekoualandany@gmail.com
+                  </a>
+                </div>
+                <div className="flex items-center gap-4 justify-center md:justify-start">
+                  <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-orange-500 border border-white/10">
+                    <Phone size={20} />
+                  </div>
+                  <a
+                    href="tel:+237654092698"
+                    className="text-lg font-bold hover:text-orange-500 transition-colors"
+                  >
+                    +237 654 092 698
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 backdrop-blur-md"
+            >
+              <h3 className="text-xl font-bold mb-2">Discutons en direct</h3>
+              <p className="text-gray-400 text-sm mb-8">
+                Réponse rapide garantie via WhatsApp.
+              </p>
+              <a
+                href="https://wa.me/237654092698"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block w-full max-w-[280px]"
+              >
+                <button className="w-full bg-[#25D366] hover:bg-[#20ba5a] text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/10">
+                  <MessageCircle size={20} /> <span>WhatsApp</span>
+                </button>
+              </a>
+            </motion.div>
           </div>
         </div>
+      </section>
+
+      <footer className="py-12 bg-gray-900 border-t border-white/5 text-center px-6">
+        <p className="text-gray-500 text-[10px] font-medium tracking-widest uppercase italic">
+          © 2026 Nze Mekou Alain Dany • Conçu avec passion au Cameroun
+        </p>
       </footer>
     </div>
   );
-};
+}
 
-export default MinproffLanding;
+/* --- SOUS-COMPOSANTS REVISITÉS --- */
+
+function ExpertiseCard({ icon, title, desc }: any) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={fadeInUp}
+      // Design sérieux : bordure fine, ombre très légère, accent orange discret au survol
+      className="relative bg-white p-8 rounded-2xl border border-gray-100 border-orange-500/30 transition-all duration-300 hover:shadow-xl group overflow-hidden"
+    >
+      {/* Petit indicateur visuel au survol */}
+      <div className="absolute top-0 left-0 w-1 h-0 bg-orange-600 h-full transition-all duration-300" />
+
+      <div className="mb-6 w-14 h-14 bg-gray-50 rounded-xl flex items-center justify-center text-gray-700 bg-orange-600 text-white transition-all duration-300">
+        {React.cloneElement(icon, { size: 28 })}
+      </div>
+      <h4 className="font-bold text-xl mb-3 text-gray-900">{title}</h4>
+      <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+    </motion.div>
+  );
+}
+
+function ProjectCard({ images, category, title, desc, tags }: any) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+
+  React.useEffect(() => {
+    if (images.length <= 1 || showModal) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [images.length, showModal]);
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  return (
+    <>
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
+        className="group bg-white rounded-[1.5rem] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:border-orange-500/20 transition-all duration-500 flex flex-col h-full"
+      >
+        {/* Image / Carousel Section */}
+        <div className="relative h-72 w-full overflow-hidden bg-gray-100 group/img">
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentIndex}
+              src={images[currentIndex]}
+              initial={{ opacity: 0.8, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0.8, x: -20 }}
+              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="w-full h-full object-cover"
+              alt={`${title} - ${currentIndex}`}
+            />
+          </AnimatePresence>
+
+          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300" />
+
+          {/* Bouton Zoom */}
+          <button
+            onClick={() => setShowModal(true)}
+            className="absolute top-4 right-4 p-2.5 backdrop-blur-md rounded-full shadow-lg translate-y-2 opacity-100 translate-y-0 transition-all duration-300 bg-orange-600 text-white z-20"
+          >
+            <Maximize2 size={18} />
+          </button>
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={prevImage}
+                className="absolute left-3 top-1/2 -translate-y-1/2 p-1.5 bg-white/20 hover:bg-white text-white hover:text-orange-600 rounded-full backdrop-blur-sm opacity-0 group-hover/img:opacity-100 transition-all z-20"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={nextImage}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 bg-white/20 hover:bg-white text-white hover:text-orange-600 rounded-full backdrop-blur-sm opacity-0 group-hover/img:opacity-100 transition-all z-20"
+              >
+                <ChevronRight size={20} />
+              </button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                {images.map((_: any, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex(idx);
+                    }}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${idx === currentIndex ? "bg-orange-500 w-5" : "bg-white/50 w-1.5"}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Card Content */}
+        <div className="p-8 border-t border-gray-50 flex-grow">
+          <span className="text-orange-700 text-[10px] font-black uppercase tracking-[0.2em] mb-3 block">
+            {category}
+          </span>
+          <h4 className="text-2xl font-bold mb-4 text-gray-900 group-hover:text-orange-700 transition-colors">
+            {title}
+          </h4>
+          <p className="text-gray-600 text-sm mb-6 leading-relaxed line-clamp-3 italic">
+            {desc}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag: string) => (
+              <span
+                key={tag}
+                className="text-[10px] bg-gray-50 text-gray-500 px-3 py-1.5 rounded-lg border border-gray-100 font-bold uppercase tracking-wider"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* --- MODAL ZOOM AMELIORE --- */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 md:p-10"
+            onClick={() => setShowModal(false)}
+          >
+            {/* Bouton Fermer (Fonctionnel) */}
+            <button
+              className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors z-[210]"
+              onClick={() => setShowModal(false)}
+            >
+              <X size={40} />
+            </button>
+
+            <div
+              className="relative w-full max-w-6xl max-h-[90vh] bg-white rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Côté Gauche : Image & Navigation */}
+              <div className="md:w-2/3 bg-gray-100 relative flex items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+                <img
+                  src={images[currentIndex]}
+                  className="w-full h-full object-contain"
+                  alt="View"
+                />
+
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevImage}
+                      className="absolute left-4 p-2 bg-black/20 hover:bg-orange-600 text-white rounded-full transition-all"
+                    >
+                      <ChevronLeft size={32} />
+                    </button>
+                    <button
+                      onClick={nextImage}
+                      className="absolute right-4 p-2 bg-black/20 hover:bg-orange-600 text-white rounded-full transition-all"
+                    >
+                      <ChevronRight size={32} />
+                    </button>
+                    {/* Bulles sous l'image dans le modal */}
+                    <div className="absolute bottom-6 flex gap-2">
+                      {images.map((_: any, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCurrentIndex(idx)}
+                          className={`h-2.5 rounded-full transition-all ${idx === currentIndex ? "bg-orange-600 w-8" : "bg-black/20 w-2.5"}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Côté Droit : Infos complètes avec Scroll */}
+              <div className="md:w-1/3 p-8 md:p-12 flex flex-col h-full bg-white overflow-y-auto">
+                <span className="text-orange-700 text-xs font-black uppercase tracking-widest mb-4">
+                  {category}
+                </span>
+                <h3 className="text-3xl font-bold text-gray-900 mb-6">
+                  {title}
+                </h3>
+
+                <div className="flex-grow">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-tighter mb-2">
+                    Description du projet
+                  </h4>
+                  <p className="text-gray-600 leading-relaxed italic mb-8">
+                    {desc}
+                  </p>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-tighter mb-4">
+                    Technologies utilisées
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag: string) => (
+                      <span
+                        key={tag}
+                        className="text-xs bg-gray-50 text-orange-800 px-4 py-2 rounded-xl font-bold border border-orange-100"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
